@@ -1,0 +1,155 @@
+#pokemon-info {
+    margin-left: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: -1px 0px 6px rgba(0, 0, 0, 0.3);
+    color: #333;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+}
+
+/* Pokemon Header Component Styles */
+
+.pokemon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100px;
+    width: 100%;
+    margin-top: 20px;
+    grid-column: 1 / span 2;
+}
+
+.pokemon-header img {
+    width: 126px;
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+}
+
+.name-and-types {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 20px;
+    flex: 1;
+}
+
+.name-and-types h1 {
+    font-size: 2.2rem;
+    margin: 0 0 10px 0;
+}
+
+.types {
+    display: flex;
+    gap: 8px;
+}
+
+.type {
+    padding: 4px 12px;
+    color: white;
+    font-size: 1.0rem;
+    width: 85px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.usage-stats {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    height: 100%;
+    margin-right: 25px;
+    flex-shrink: 0;
+}
+
+.usage-stats>div {
+    text-align: right;
+}
+
+.stat-label {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+/* Pokemon Base Stats Component Styles */
+.datacontainer {
+    width: 500px;
+    margin-top: 30px;
+    height: 271px;
+
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+.bar-chart {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+/* Pokemon Moves Component Styles */
+
+.subcontainer {
+    border: 1px solid #ccc;
+}
+
+.moves-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-family: sans-serif;
+    background-color: #f5f5f5;
+}
+
+.moves-row.odd {
+    background-color: #ffffff;
+}
+
+
+.moves-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.teammate-sprite {
+    width: 60px;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.teammate-row {
+    transition: all 0.3s;
+}
+
+.teammate-row:hover {
+    cursor: pointer;
+    color: rgb(13, 141, 246);
+
+}
+
+.item-sprite {
+    width: 30px;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
