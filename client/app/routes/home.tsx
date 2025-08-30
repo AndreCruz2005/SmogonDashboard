@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { FixedSizeList } from "react-window";
 import { useGlobalState } from "./../global_states_context";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -15,6 +15,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const {
         months,
@@ -195,7 +196,7 @@ export default function Home() {
         };
 
         return (
-            <div id="pokemon-list" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+            <div id="pokemon-list" className={menuVisible ? "visible" : "hidden"}>
                 <Topbar />
                 <input
                     onChange={(e) => setSearchedPokemon(e.target.value)}
@@ -222,6 +223,13 @@ export default function Home() {
     return (
         <div style={{ display: "flex" }}>
             <PokemonList />
+            <div
+                id="show-menu-button"
+                className={menuVisible ? "btn-active" : "btn-inactive"}
+                onClick={() => {
+                    setMenuVisible(!menuVisible);
+                }}
+            ></div>
             <PokemonInfo />
         </div>
     );

@@ -1,4 +1,4 @@
-import { useState, useEffect, use, useRef } from "react";
+import { useState, useEffect, use } from "react";
 import { FixedSizeList } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useGlobalState } from "./../global_states_context";
@@ -21,13 +21,11 @@ import "chart.js/auto";
 export default function PokemonInfo() {
     const { selectedData, selectedPokemon, setSelectedPokemon } = useGlobalState();
 
-    const [pokemonData, setPokemonData] = useState({});
     const [pokemonUsage, setPokemonUsage] = useState(0);
 
     useEffect(() => {
         if (!selectedPokemon || !selectedData.data || !selectedData.data[selectedPokemon]) return;
 
-        setPokemonData(selectedData.data ? selectedData.data[selectedPokemon] : {});
         let rawCount = 0;
         for (const key in selectedData.data[selectedPokemon].Abilities)
             rawCount += selectedData.data[selectedPokemon].Abilities[key];
@@ -76,22 +74,21 @@ export default function PokemonInfo() {
         );
     };
 
-    const BaseStats = ({ uniqueKey }) => {
+    const BaseStats = () => {
         if (!selectedPokemon || !selectedData.data || !selectedData.data[selectedPokemon]) return <></>;
-
         const jsonKey = selectedPokemon.toLowerCase().replace(/[-.' ]/g, "");
         const baseStats = pokedex[jsonKey]?.baseStats || [];
-        const maxStat = 200;
+        const maxStat = 200; // adjust based on your max stat
 
         const getColor = (value) => {
             const percent = value / maxStat;
             if (value < 100) {
                 const green = Math.round(255 * (percent / 0.5));
-                return `rgb(255, ${green}, 0)`;
+                return `rgb(255, ${green}, 0)`; // red → green
             } else if (value < 200) {
                 const blue = Math.round(255 * ((percent - 0.5) / 0.5));
                 const red = Math.round(255 * (1 - (percent - 0.5) / 0.5));
-                return `rgb(${red}, 255, ${blue})`;
+                return `rgb(${red}, 255, ${blue})`; // green → blue
             } else {
                 return "rgb(0, 255, 255)";
             }
@@ -100,19 +97,12 @@ export default function PokemonInfo() {
         const data = {
             labels: ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"],
             datasets: [
-                {
-                    data: baseStats,
-                    backgroundColor: baseStats.map(getColor),
-                    borderColor: "black",
-                    borderWidth: 1,
-                },
+                { data: baseStats, backgroundColor: baseStats.map(getColor), borderColor: "black", borderWidth: 1 },
             ],
         };
 
         const options = {
             indexAxis: "y",
-            responsive: true,
-            maintainAspectRatio: false,
             scales: {
                 x: {
                     beginAtZero: true,
@@ -128,8 +118,10 @@ export default function PokemonInfo() {
                     },
                 },
             },
-            categoryPercentage: 1.0,
+
+            categoryPercentage: 1.0, // Removes space between categories
             barPercentage: 1.0,
+
             plugins: {
                 legend: {
                     display: false,
@@ -147,80 +139,10 @@ export default function PokemonInfo() {
 
         return (
             <div className="datacontainer">
-                <h2>Base Stats</h2>
+                <h2> Base Stats</h2>
                 <div className="bar-chart">
-                    <Bar data={data} options={options} key={`basestats-${uniqueKey}-${selectedPokemon}`} />
+                    <Bar data={data} options={options} />
                 </div>
-            </div>
-        );
-    };
-
-    const Abilities = ({ title, uniqueKey }) => {
-        if (!selectedPokemon || !selectedData.data || !selectedData.data[selectedPokemon]) return <></>;
-
-        const data = selectedData?.data[selectedPokemon].Abilities || {};
-        const labels = Object.keys(data);
-        const values = Object.values(data);
-
-        // Handle case where there's no data
-        if (labels.length === 0) {
-            return (
-                <div style={{ width: "400px", height: "400px", margin: "20px" }}>
-                    <p>No abilities data available</p>
-                </div>
-            );
-        }
-
-        const chartData = {
-            labels: labels,
-            datasets: [
-                {
-                    data: values,
-                    backgroundColor: [
-                        "#FF6384",
-                        "#36A2EB",
-                        "#FFCE56",
-                        "#4BC0C0",
-                        "#9966FF",
-                        "#FF9F40",
-                        "#FF6384",
-                        "#C9CBCF",
-                    ],
-                    borderWidth: 2,
-                },
-            ],
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: "top",
-                },
-                title: {
-                    display: true,
-                    text: title || "Abilities Distribution",
-                },
-                datalabels: {
-                    display: true,
-                    color: "white",
-                    font: {
-                        weight: "bold",
-                        size: 12,
-                    },
-                    formatter: (value, context) => {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return `${percentage}%`;
-                    },
-                },
-            },
-        };
-
-        return (
-            <div style={{ width: "400px", height: "400px", margin: "20px" }}>
-                <Doughnut data={chartData} options={options} key={`abilities-${uniqueKey}-${selectedPokemon}`} />
             </div>
         );
     };
@@ -253,7 +175,7 @@ export default function PokemonInfo() {
                     <div
                         id="moves-list"
                         style={{
-                            width: "498px",
+                            width: "100%",
                             height: "270px",
                             display: "flex",
                             flexDirection: "column",
@@ -276,6 +198,89 @@ export default function PokemonInfo() {
                             </AutoSizer>
                         </div>
                     </div>
+                </div>
+            </div>
+        );
+    };
+
+    const Abilities = () => {
+        if (!selectedPokemon || !selectedData.data || !selectedData.data[selectedPokemon]) return <></>;
+
+        const data = selectedData?.data[selectedPokemon].Abilities || {};
+        const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        const top = sorted.slice(0, 7);
+        const rest = sorted.slice(7);
+
+        const labels = top.map(([key]) => abilities[key]?.name || key);
+        const values = top.map(([, value]) => Math.ceil(value));
+
+        if (rest.length > 0) {
+            labels.push("Others");
+            values.push(Math.ceil(rest.reduce((sum, [, value]) => sum + value, 0)));
+        }
+
+        const chartData = {
+            labels: labels,
+            datasets: [
+                {
+                    data: values,
+                    backgroundColor: [
+                        "#FF6384",
+                        "#36A2EB",
+                        "#FFCE56",
+                        "#4BC0C0",
+                        "#9966FF",
+                        "#FF9F40",
+                        "#FF6384",
+                        "#C9CBCF",
+                    ],
+                    borderColor: ["#000"],
+                    borderWidth: 2,
+                },
+            ],
+        };
+
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "right",
+                },
+                title: {
+                    display: false,
+                },
+                datalabels: {
+                    display: true,
+                    color: "white",
+                    font: {
+                        weight: "bold",
+                        size: 12,
+                    },
+                    formatter: (value, context) => {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return `${percentage}%`;
+                    },
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.raw / total) * 100).toFixed(1);
+                            return `${context.label}: ${context.raw} (${percentage}%)`;
+                        },
+                    },
+                },
+            },
+        };
+
+        return (
+            <div className="datacontainer">
+                <h2>Used Abilities</h2>
+                <div className="bar-chart">
+                    <Doughnut data={chartData} options={options} />
                 </div>
             </div>
         );
@@ -316,7 +321,7 @@ export default function PokemonInfo() {
                     <div
                         id="abilities-list"
                         style={{
-                            width: "498px",
+                            width: "100%",
                             height: "270px",
                             display: "flex",
                             flexDirection: "column",
@@ -380,7 +385,7 @@ export default function PokemonInfo() {
                     <div
                         id="abilities-list"
                         style={{
-                            width: "498px",
+                            width: "100%",
                             height: "270px",
                             display: "flex",
                             flexDirection: "column",
@@ -411,9 +416,9 @@ export default function PokemonInfo() {
     return (
         <div id="pokemon-info">
             <PokemonHeader />
-            <BaseStats uniqueKey="43002242" />
+            <BaseStats />
+            <Abilities />
             <MovesList />
-            <Abilities title={"Used Abilities"} uniqueKey="49324234" />
             <Teammates />
             <ItemsList />
         </div>

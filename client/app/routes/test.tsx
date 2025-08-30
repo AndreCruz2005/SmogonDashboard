@@ -161,6 +161,11 @@ export default function MultipleChartsPage() {
 
     return (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {/* Method 1: Using unique chartId */}
+            <DoughnutChart data={salesData} title="Sales Distribution" chartId="sales-chart" />
+            <DoughnutChart data={marketingData} title="Marketing Channels" chartId="marketing-chart" />
+            <DoughnutChart data={regionData} title="Regional Sales" chartId="region-chart" />
+
             {/* Method 2: Using unique keys */}
             <DoughnutChartWithKey data={salesData} title="Sales (Key Method)" uniqueKey="chart-1" />
             <DoughnutChartWithKey data={marketingData} title="Marketing (Key Method)" uniqueKey="chart-2" />
