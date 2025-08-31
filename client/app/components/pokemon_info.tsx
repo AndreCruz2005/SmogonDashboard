@@ -172,16 +172,7 @@ export default function PokemonInfo() {
             <div className="datacontainer">
                 <h2>Used Moves</h2>
                 <div className="subcontainer">
-                    <div
-                        id="moves-list"
-                        style={{
-                            width: "100%",
-                            height: "270px",
-                            display: "flex",
-                            flexDirection: "column",
-                            boxShadow: "none",
-                        }}
-                    >
+                    <div className="lists">
                         {/* Flex container for the list to expand */}
                         <div style={{ flex: 1 }}>
                             <AutoSizer>
@@ -318,16 +309,7 @@ export default function PokemonInfo() {
             <div className="datacontainer">
                 <h2>Teammates</h2>
                 <div className="subcontainer">
-                    <div
-                        id="abilities-list"
-                        style={{
-                            width: "100%",
-                            height: "270px",
-                            display: "flex",
-                            flexDirection: "column",
-                            boxShadow: "none",
-                        }}
-                    >
+                    <div className="lists">
                         {/* Flex container for the list to expand */}
                         <div style={{ flex: 1 }}>
                             <AutoSizer>
@@ -382,16 +364,53 @@ export default function PokemonInfo() {
             <div className="datacontainer">
                 <h2>Used Items</h2>
                 <div className="subcontainer">
-                    <div
-                        id="abilities-list"
-                        style={{
-                            width: "100%",
-                            height: "270px",
-                            display: "flex",
-                            flexDirection: "column",
-                            boxShadow: "none",
-                        }}
-                    >
+                    <div className="lists">
+                        {/* Flex container for the list to expand */}
+                        <div style={{ flex: 1 }}>
+                            <AutoSizer>
+                                {({ height, width }) => (
+                                    <FixedSizeList
+                                        height={height}
+                                        width={width}
+                                        itemCount={entries.length}
+                                        itemSize={60}
+                                    >
+                                        {Row}
+                                    </FixedSizeList>
+                                )}
+                            </AutoSizer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const SpreadsList = () => {
+        if (!selectedPokemon || !selectedData.data || !selectedData.data[selectedPokemon]) return <></>;
+        const spreadsData = selectedData.data[selectedPokemon].Spreads;
+
+        let entries = Object.entries(spreadsData).sort((a, b) => b[1] - a[1]);
+
+        const Row = ({ index, style }) => {
+            const [key, value] = entries[index];
+            const usage = (value / pokemonUsage) * 100;
+            const text = key.replace(/:/g, " Nature | ");
+            return (
+                <div className={`moves-row ${index % 2 == 0 ? "even" : "odd"}`} style={style}>
+                    <div className="moves-info">
+                        <strong>{text}</strong>
+                        <span>{usage.toFixed(3)}%</span>
+                    </div>
+                </div>
+            );
+        };
+
+        return (
+            <div className="datacontainer">
+                <h2>Stat Spreads</h2>
+                <div className="subcontainer">
+                    <div className="lists">
                         {/* Flex container for the list to expand */}
                         <div style={{ flex: 1 }}>
                             <AutoSizer>
@@ -421,6 +440,7 @@ export default function PokemonInfo() {
             <MovesList />
             <Teammates />
             <ItemsList />
+            <SpreadsList />
         </div>
     );
 }
