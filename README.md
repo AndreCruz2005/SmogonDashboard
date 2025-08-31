@@ -2,6 +2,9 @@
 
 A web application that allows users to view data and statistics on all competitive formats in Pokémon Showdown, including usage stats, teammates, items, moves, spreads, and more. Data retrieved from https://www.smogon.com/stats/
 
+![Desktop](./images/main_screen_desktop.png)
+![Mobile](./images/main_screen_phone.png)
+
 ## Run locally
 
 1. Clone the repository:
